@@ -11,7 +11,7 @@
               <%= @team.name %>
             </div>
             <% if @team.owner.id == current_user.id %>
-              <%= link_to I18n.t('views.messages.edit_team'), edit_team_path(@team), class: 'btn btn-success btn-block mt-3' %>
+            <%= link_to I18n.t('views.messages.edit_team'), edit_team_path(@team), class: 'btn btn-success btn-block mt-3' %>
             <% end %>
           </div>
 
@@ -19,12 +19,12 @@
             <div>
               <h5><%= I18n.t('views.messages.invite_team_member') %></h5>
               <%= form_with model: :assign, scope: :post, url: team_assigns_path(@team), local: true do |form| %>
-                <div class="input-group input-group-sm">
-                  <%= text_field_tag :email, '', { class: 'form-control', placeholder: I18n.t('views.messages.invitation_placeholder') } %>
-                  <span class="input-group-append">
-                    <button type="submit" class="btn btn-info btn-flat"><%= I18n.t('views.button.invite') %></button>
-                  </span>
-                </div>
+              <div class="input-group input-group-sm">
+                <%= text_field_tag :email, '', { class: 'form-control', placeholder: I18n.t('views.messages.invitation_placeholder') } %>
+                <span class="input-group-append">
+                  <button type="submit" class="btn btn-info btn-flat"><%= I18n.t('views.button.invite') %></button>
+                </span>
+              </div>
               <% end %>
             </div>
 
@@ -40,27 +40,32 @@
               <table class="table">
                 <tbody>
                   <% @team.assigns.each do |assign| %>
-                    <tr>
-                      <td><%= image_tag 'default.jpg', size: '40x40' %></td>
-                      <td><%= assign.user.email %></td>
-                      <td><% if (
-                                ( current_user.id == assign.team.owner.id ) && ( current_user.id != assign.user.id ) ||
-                                ( current_user.id != assign.team.owner.id ) && ( current_user.id == assign.user.id )
-                              )
-                        %></td>
+                  <tr>
+                    <td><%= image_tag 'default.jpg', size: '40x40' %></td>
+                    <td><%= assign.user.email %></td>
+                    <td><% if (
+                      ( current_user.id == assign.team.owner.id ) && ( current_user.id != assign.user.id ) ||
+                      ( current_user.id != assign.team.owner.id ) && ( current_user.id == assign.user.id )
+                      )
+                      %></td>
                       <td><%= link_to I18n.t('views.button.delete'), team_assign_path(@team, assign), method: :delete, class: 'btn btn-sm btn-danger' %></td>
+                      <td>
+                        <% if ( current_user.id == assign.team.owner.id ) && ( current_user.id != assign.user.id ) %>
+                        <%= link_to I18n.t('views.button.permissions_moving'), change_owner_team_path(@team.id, assign: assign ), method: :patch, class: 'btn btn-sm btn-primary' %>
+                        <% end %>
+                      </td>
                       <% end %>
                     </tr>
-                  <% end %>
-                </tbody>
-              </table>
+                    <% end %>
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>
+        <!-- /.card-body -->
       </div>
-      <!-- /.card-body -->
+      <!-- /.card -->
     </div>
-    <!-- /.card -->
+    <!-- ./col -->
   </div>
-  <!-- ./col -->
-</div>
